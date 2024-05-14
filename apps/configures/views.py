@@ -12,7 +12,7 @@ class ConfiguresViewSet(viewsets.ModelViewSet):
 
     queryset = Configures.objects.filter(is_delete=False)
     serializer_class = ConfiguresSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
 
     def perform_destroy(self, instance):

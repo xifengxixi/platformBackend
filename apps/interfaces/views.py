@@ -19,7 +19,7 @@ class InterfacesViewSet(viewsets.ModelViewSet):
 
     queryset = Interfaces.objects.filter(is_delete=False)
     serializer_class = serializers.InterfaceModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
 
     def perform_destroy(self, instance):

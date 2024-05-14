@@ -22,18 +22,18 @@ def get_count_by_project(datas):
         for one_dict in interfaces_testcases_objs:
             testcases_count += one_dict['testcases']
 
-        interfaces_configrures_objs = Interfaces.objects.values('id').annotate(configrures=Count('configrures')). \
+        interfaces_configures_objs = Interfaces.objects.values('id').annotate(configures=Count('configures')). \
             filter(project_id=project_id, is_delete=False)
-        configrures_count = 0
-        for one_dict in interfaces_configrures_objs:
-            configrures_count += one_dict['configrures']
+        configures_count = 0
+        for one_dict in interfaces_configures_objs:
+            configures_count += one_dict['configures']
 
         testsuits_count = Testsuits.objects.filter(project_id=project_id, is_delete=False).count()
 
         item.update({
             'interfaces': interfaces_count,
             'testcases': testcases_count,
-            'configrures': configrures_count,
+            'configures': configures_count,
             'testsuits': testsuits_count
         })
         datas_list.append(item)

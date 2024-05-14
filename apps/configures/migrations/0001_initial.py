@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         help_text="所属接口",
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="configrures",
+                        related_name="configures",
                         to="interfaces.interfaces",
                     ),
                 ),

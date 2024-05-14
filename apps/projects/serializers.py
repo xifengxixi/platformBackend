@@ -53,3 +53,33 @@ class ProjectsRunSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
         fields = ('id', 'env_id')
+
+class ProjectsBatchDeleteSerializer(serializers.Serializer):
+    """
+    批量删除项目序列化器
+    """
+    ids = serializers.ListField(child=serializers.IntegerField(), required=True, help_text='项目ID列表', write_only=True)
+
+    class Meta:
+        model = Projects
+        fields = ('ids',)
+
+    def validate_ids(self, value):
+
+        # 校验项目是否存在
+        for project_id in value:
+            try:
+                validates.whether_existed_project_id(project_id)
+            except:
+                raise serializers.ValidationError(f'项目ID{project_id}不存在')
+        return value
+
+class ProjectsListSerializer(serializers.ModelSerializer):
+    """
+    项目列表序列化器
+    """
+
+    class Meta:
+        model = Projects
+        exclude = ('update_time', 'is_delete')
+        read_only_fields = ('id', 'name', 'leader', 'tester', 'programmer', 'publish_app', 'desc', 'create_time')

@@ -28,7 +28,7 @@ SUITES_DIR = os.path.join(BASE_DIR, 'suites')
 SECRET_KEY = "django-insecure-_zhjrwaa%0%us_cgiarfbjz_86k))5t^47*myv_jy--2rume7$"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -146,7 +146,7 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "platformBackend",
-        "USER": "xfxx",
+        "USER": "root",
         "PASSWORD": "123456",
         "HOST": "127.0.0.1",
         "PORT": 3306,

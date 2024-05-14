@@ -26,7 +26,7 @@ class ReportViewSet(
 
     queryset = Reports.objects.filter(is_delete=False)
     serializer_class = serializers.ReportSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     ordering_fields = ('id', 'name')
 
     def perform_destroy(self, instance):

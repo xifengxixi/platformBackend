@@ -10,7 +10,7 @@ class EnvViewSet(viewsets.ModelViewSet):
 
     queryset = Envs.objects.filter(is_delete=False)
     serializer_class = serializers.EnvSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
 
     def perform_destroy(self, instance):

@@ -16,7 +16,7 @@ class DebugtalkViewSet(
 
     queryset = DebugTalks.objects.filter(is_delete=False)
     serializer_class = serializers.DebugtalkSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
 
     def retrieve(self, request, *args, **kwargs):

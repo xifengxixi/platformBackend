@@ -18,12 +18,51 @@ class ProjectsViewSet(viewsets.ModelViewSet):
 
     queryset = Projects.objects.filter(is_delete=False)
     serializer_class = serializers.ProjectModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
 
     def perform_destroy(self, instance):
         instance.is_delete = True
         instance.save() # 逻辑删除
+
+    @action(methods=['post'], detail=False)
+    def batch_delete(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            ids = serializer.validated_data.get('ids', [])
+            self.get_queryset().filter(id__in=ids).update(is_delete=True)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['post'], detail=False)
+    def get_list(self, request, *args, **kwargs):
+        filter = {}
+        filter['name'] = request.data.get('name', '')
+        filter['leader'] = request.data.get('leader', '')
+
+        queryset = self.get_queryset()
+
+        for k, v in filter.items():
+            if v:
+                if k == 'name':
+                    queryset = queryset.filter(name__icontains=v)
+                elif k == 'leader':
+                    queryset = queryset.filter(leader__icontains=v)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            datas = serializer.data
+            datas = get_count_by_project(datas)
+            return self.get_paginated_response(datas)
+
+        serializer = self.get_serializer(queryset, many=True)
+        datas = serializer.data
+        datas = get_count_by_project(datas)
+        return Response(datas)
+
+
 
     @action(methods=['get'], detail=False)
     def names(self, request, *args, **kwargs):
@@ -107,5 +146,9 @@ class ProjectsViewSet(viewsets.ModelViewSet):
             return serializers.ProjectNameSerializer
         elif self.action == 'run':
             return serializers.ProjectsRunSerializer
+        elif self.action == 'batch_delete':
+            return serializers.ProjectsBatchDeleteSerializer
+        elif self.action == 'get_list':
+            return serializers.ProjectsListSerializer
         else:
             return self.serializer_class

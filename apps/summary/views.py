@@ -16,7 +16,7 @@ class SummaryAPIView(APIView):
     """
     返回统计信息
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         """
