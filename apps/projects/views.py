@@ -12,6 +12,7 @@ from envs.models import Envs
 from rest_framework import status
 from testcases.models import Testcases
 from utils import common
+from datetime import datetime
 
 
 class ProjectsViewSet(viewsets.ModelViewSet):
@@ -115,7 +116,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
         env_id = datas.get('env_id') # 获取环境变量env_id
 
         # 创建测试用例所在目录名
-        testcase_dir_path = os.path.join(settings.SUITES_DIR, time.strftime('%Y%m%d%H%M%S%f'))
+        testcase_dir_path = os.path.join(settings.SUITES_DIR, datetime.now().strftime('%Y%m%d%H%M%S%f'))
         if not os.path.exists(testcase_dir_path):
             os.mkdir(testcase_dir_path)
 
