@@ -24,3 +24,11 @@ class EnvListSerializer(serializers.ModelSerializer):
         model = Envs
         exclude = ('update_time', 'is_delete')
         read_only_fields = ('id', 'name', 'base_url', 'desc', 'create_time',)
+
+class EnvBatchDeleteSerializer(serializers.ModelSerializer):
+
+    ids = serializers.ListField(child=serializers.IntegerField(), required=True, help_text="环境ID列表", write_only=True)
+
+    class Meta:
+        model = Envs
+        fields = ('ids',)
