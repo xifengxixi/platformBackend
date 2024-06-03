@@ -13,6 +13,7 @@ from rest_framework import status
 from testcases.models import Testcases
 from utils import common
 from datetime import datetime
+from debugtalks.models import DebugTalks
 
 
 class ProjectsViewSet(viewsets.ModelViewSet):
@@ -25,6 +26,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         instance.is_delete = True
         instance.save() # 逻辑删除
+        DebugTalks.objects.filter(project_id=instance.id).update(is_delete=True)
 
     @action(methods=['post'], detail=False)
     def batch_delete(self, request, *args, **kwargs):
