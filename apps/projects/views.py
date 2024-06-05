@@ -34,6 +34,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
         if serializer.is_valid(raise_exception=True):
             ids = serializer.validated_data.get('ids', [])
             self.get_queryset().filter(id__in=ids).update(is_delete=True)
+            DebugTalks.objects.filter(project_id__in=ids).update(is_delete=True)
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
