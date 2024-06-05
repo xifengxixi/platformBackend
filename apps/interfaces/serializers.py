@@ -40,3 +40,28 @@ class InterfaceRunSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interfaces
         fields = ('id', 'env_id')
+
+class InterfaceListSerializer(serializers.ModelSerializer):
+    """
+    接口列表序列化器
+    """
+    project = serializers.StringRelatedField(help_text='项目名称')
+
+    class Meta:
+        model = Interfaces
+        exclude = ('update_time', 'is_delete')
+        read_only_fields = ('id', 'name', 'project', 'tester', 'desc', 'create_time')
+
+class InterfaceBatchDeleteSerializer(serializers.Serializer):
+    ids = serializers.ListField(child=serializers.IntegerField(), required=True, help_text='接口ID列表', write_only=True)
+
+    class Meta:
+        fields = ('ids',)
+
+    def validate_ids(self, value):
+        for interface_id in value:
+            try:
+                validates.whether_existed_interface_id(interface_id)
+            except:
+                raise serializers.ValidationError(f'接口ID{interface_id}不存在')
+        return value

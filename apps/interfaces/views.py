@@ -26,6 +26,16 @@ class InterfacesViewSet(viewsets.ModelViewSet):
         instance.is_delete = True
         instance.save()
 
+    @action(methods=['post'], detail=False)
+    def batch_delete(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            ids = request.data.get('ids', [])
+            Interfaces.objects.filter(id__in=ids).update(is_delete=True)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     @action(methods=['get'], detail=True)
     def testcases(self, request, pk):
         testcase_objs = Testcases.objects.filter(interface_id=pk, is_delete=False)
@@ -52,6 +62,26 @@ class InterfacesViewSet(viewsets.ModelViewSet):
         response = super().list(self, request, *args, **kwargs)
         response.data['results'] = get_count_by_interface(response.data['results'])
         return response
+
+    @action(methods=['post'], detail=False)
+    def get_list(self, request, *args, **kwargs):
+        filter_args = {
+            'name__contains': request.data.get('name', ''),
+        }
+
+        queryset = self.get_queryset().filter(**filter_args)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            datas = serializer.data
+            datas = get_count_by_interface(datas)
+            return self.get_paginated_response(datas)
+
+        serializer = self.get_serializer(queryset, many=True)
+        datas = serializer.data
+        datas = get_count_by_interface(datas)
+        return Response(datas)
 
     @action(methods=['post'], detail=True)
     def run(self, request, pk=None):
@@ -86,4 +116,11 @@ class InterfacesViewSet(viewsets.ModelViewSet):
         不同的action选择不同的序列化器
         :return:
         """
-        return serializers.InterfaceRunSerializer if self.action == 'run' else self.serializer_class
+        if self.action == 'run':
+            return serializers.InterfaceRunSerializer
+        elif self.action == 'get_list':
+            return serializers.InterfaceListSerializer
+        elif self.action == 'batch_delete':
+            return serializers.InterfaceBatchDeleteSerializer
+        else:
+            return self.serializer_class
