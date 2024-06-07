@@ -97,7 +97,7 @@ class TestcasesViewSet(viewsets.ModelViewSet):
 
             'extract': testcase_extract_datas_list,
             'validate': testcase_validate_list,
-            'globaVar': testcase_variables_list,
+            'globalVar': testcase_variables_list,
             'parameterized': testcase_parameters_datas_list,
             'setupHooks': testcase_setup_hooks_datas_list,
             'teardownHooks': testcase_teardown_hooks_datas_list,
@@ -126,3 +126,19 @@ class TestcasesViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         return TestcasesRunSerializer if self.action == 'run' else self.serializer_class
+
+    @action(methods=['post'], detail=False)
+    def get_list(self, request, *args, **kwargs):
+        filter_args = {
+            'name__contains': request.data.get('name', ''),
+            'interface__name__contains': request.data.get('interface', ''),
+            'project__name__contains': request.data.get('project', ''),
+        }
+        queryset = self.get_queryset().filter(**filter_args)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
