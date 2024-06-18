@@ -63,3 +63,21 @@ class TestcasesRunSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testcases
         fields = ('id', 'env_id')
+
+class TestcasesBatchDeleteSerializer(serializers.ModelSerializer):
+    """
+    批量删除用例序列化器
+    """
+    ids = serializers.ListField(child=serializers.IntegerField(), required=True, help_text="用例ID列表", write_only=True)
+
+    class Meta:
+        model = Testcases
+        fields = ('ids',)
+
+    def validate_ids(self, value):
+        for testcase_id in value:
+            try:
+                validates.whether_existed_testcase_id(testcase_id)
+            except:
+                raise serializers.ValidationError(f"用例ID{testcase_id}不存在")
+        return value

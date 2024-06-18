@@ -2,6 +2,7 @@ from rest_framework import serializers
 from projects.models import Projects
 from interfaces.models import Interfaces
 from envs.models import Envs
+from testcases.models import Testcases
 
 
 def whether_existed_project_id(value):
@@ -35,3 +36,12 @@ def whether_existed_env_id(value):
     if value != 0:
         if not Envs.objects.filter(is_delete=False, id=value).exists():
             raise serializers.ValidationError('所选环境配置不存在！')
+
+def whether_existed_testcase_id(value):
+    """
+    检查用例id是否存在
+    :param value:
+    :return:
+    """
+    if not Testcases.objects.filter(is_delete=False, id=value).exists():
+        raise serializers.ValidationError('所选用例不存在！')

@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from .models import Testcases
-from .serializers import TestcasesSerializer, TestcasesRunSerializer
+from . import serializers
 from rest_framework import permissions
 from interfaces.models import Interfaces
 from utils import handle_datas
@@ -12,17 +12,28 @@ import time
 from django.conf import settings
 from envs.models import Envs
 from utils import common
+from rest_framework import status
 
 class TestcasesViewSet(viewsets.ModelViewSet):
 
     queryset = Testcases.objects.filter(is_delete=False)
-    serializer_class = TestcasesSerializer
+    serializer_class = serializers.TestcasesSerializer
     permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
 
     def perform_destroy(self, instance):
         instance.is_delete = True
         instance.save()
+
+    @action(methods=['post'], detail=False)
+    def batch_delete(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            ids = serializer.validated_data.get('ids', [])
+            self.get_queryset().filter(id__in=ids).update(is_delete=True)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         """获取用例详情信息"""
@@ -125,14 +136,19 @@ class TestcasesViewSet(viewsets.ModelViewSet):
 
 
     def get_serializer_class(self):
-        return TestcasesRunSerializer if self.action == 'run' else self.serializer_class
+        if self.action == 'run':
+            return serializers.TestcasesRunSerializer
+        elif self.action == 'batch_delete':
+            return serializers.TestcasesBatchDeleteSerializer
+        else:
+            return self.serializer_class
 
     @action(methods=['post'], detail=False)
     def get_list(self, request, *args, **kwargs):
         filter_args = {
             'name__contains': request.data.get('name', ''),
             'interface__name__contains': request.data.get('interface', ''),
-            'project__name__contains': request.data.get('project', ''),
+            'interface__project__name__contains': request.data.get('project', ''),
         }
         queryset = self.get_queryset().filter(**filter_args)
         page = self.paginate_queryset(queryset)
