@@ -140,6 +140,8 @@ class TestcasesViewSet(viewsets.ModelViewSet):
             return serializers.TestcasesRunSerializer
         elif self.action == 'batch_delete':
             return serializers.TestcasesBatchDeleteSerializer
+        elif self.action == 'names':
+            return serializers.TestcasesNameSerializer
         else:
             return self.serializer_class
 
@@ -156,5 +158,12 @@ class TestcasesViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
 
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=False)
+    def names(self, request, *args, **kwargs):
+        interface_id = request.data.get('interface_id', '')
+        queryset = self.get_queryset().filter(interface_id=interface_id)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

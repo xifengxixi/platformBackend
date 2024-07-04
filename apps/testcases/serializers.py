@@ -81,3 +81,22 @@ class TestcasesBatchDeleteSerializer(serializers.ModelSerializer):
             except:
                 raise serializers.ValidationError(f"用例ID{testcase_id}不存在")
         return value
+
+class TestcasesNameSerializer(serializers.ModelSerializer):
+    """
+    用例名称序列化器
+    """
+    interface_id = serializers.IntegerField(write_only=True)
+    class Meta:
+        model = Testcases
+        fields = ('id', 'name', 'interface_id')
+        extra_kwargs = {
+            'name': {'read_only': True},
+        }
+
+    def validate_interface_id(self, value):
+        try:
+            validates.whether_existed_interface_id(value)
+        except:
+            raise serializers.ValidationError(f"接口ID{value}不存在")
+        return value
