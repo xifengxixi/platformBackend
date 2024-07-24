@@ -3,6 +3,7 @@ from projects.models import Projects
 from interfaces.models import Interfaces
 from envs.models import Envs
 from testcases.models import Testcases
+from configures.models import Configures
 
 
 def whether_existed_project_id(value):
@@ -45,3 +46,12 @@ def whether_existed_testcase_id(value):
     """
     if not Testcases.objects.filter(is_delete=False, id=value).exists():
         raise serializers.ValidationError('所选用例不存在！')
+
+def whether_existed_configure_id(value):
+    """
+    检查配置id是否存在
+    :param value:
+    :return:
+    """
+    if not Configures.objects.filter(is_delete=False, id=value).exists():
+        raise serializers.ValidationError('所选配置不存在！')

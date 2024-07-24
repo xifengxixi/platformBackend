@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Configures
 from interfaces.models import Interfaces
 from utils.validates import whether_existed_project_id, whether_existed_interface_id
+from utils import validates
 
 
 class InterfacesAnotherSerializer(serializers.ModelSerializer):
@@ -55,3 +56,19 @@ class ConfiguresSerializer(serializers.ModelSerializer):
             interface_dict = validated_data.pop('interface')
             validated_data['interface_id'] = interface_dict['iid']
         return super().update(instance, validated_data)
+
+class ConfiguresBatchDeleteSerializer(serializers.ModelSerializer):
+
+    ids = serializers.ListField(child=serializers.IntegerField(), required=True, help_text="配置ID列表", write_only=True)
+
+    class Meta:
+        model = Configures
+        fields = ('ids',)
+
+    def validate_ids(self, value):
+        for configure_id in value:
+            try:
+                validates.whether_existed_configure_id(configure_id)
+            except:
+                raise serializers.ValidationError(f"配置ID{configure_id}不存在")
+        return value

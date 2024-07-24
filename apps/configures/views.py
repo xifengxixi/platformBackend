@@ -6,6 +6,9 @@ from interfaces.models import Interfaces
 from utils import handle_datas
 import json
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import status
+from . import serializers
 
 
 class ConfiguresViewSet(viewsets.ModelViewSet):
@@ -14,10 +17,22 @@ class ConfiguresViewSet(viewsets.ModelViewSet):
     serializer_class = ConfiguresSerializer
     permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
+    filterset_fields = ['name',]
+    search_fields = ['name', 'author']
 
     def perform_destroy(self, instance):
         instance.is_delete = True
         instance.save()
+
+    @action(methods=['post'], detail=False)
+    def batch_delete(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            ids = serializer.validated_data.get('ids', [])
+            self.get_queryset().filter(id__in=ids).update(is_delete=True)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         config_obj = self.get_object()
@@ -46,3 +61,9 @@ class ConfiguresViewSet(viewsets.ModelViewSet):
         }
 
         return Response(datas)
+
+    def get_serializer_class(self):
+        if self.action == 'batch_delete':
+            return serializers.ConfiguresBatchDeleteSerializer
+        else:
+            return self.serializer_class
