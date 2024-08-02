@@ -4,6 +4,7 @@ from interfaces.models import Interfaces
 from envs.models import Envs
 from testcases.models import Testcases
 from configures.models import Configures
+from testsuits.models import Testsuits
 
 
 def whether_existed_project_id(value):
@@ -55,3 +56,12 @@ def whether_existed_configure_id(value):
     """
     if not Configures.objects.filter(is_delete=False, id=value).exists():
         raise serializers.ValidationError('所选配置不存在！')
+
+def whether_existed_testsuit_id(value):
+    """
+    检查套件id是否存在
+    :param value:
+    :return:
+    """
+    if not Testsuits.objects.filter(is_delete=False, id=value).exists():
+        raise serializers.ValidationError('所选套件不存在！')

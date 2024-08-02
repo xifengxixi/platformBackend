@@ -20,10 +20,22 @@ class TestsuitViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.TestSuitSerializer
     permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
+    filterset_fields = ['name',]
+    search_fields = ['name', 'project__name']
 
     def perform_destroy(self, instance):
         instance.is_delete = True
         instance.save()
+
+    @action(methods=['post'], detail=False)
+    def batch_delete(self, request, *args, **kwargs):
+        serializers = self.get_serializer(data=request.data)
+        if serializers.is_valid():
+            ids = serializers.validated_data.get('ids', [])
+            self.get_queryset().filter(id__in=ids).update(is_delete=True)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, *args, **kwargs):
         """获取用例详情信息"""
@@ -72,4 +84,9 @@ class TestsuitViewSet(viewsets.ModelViewSet):
         不同的action选择不同的序列化器
         :return:
         """
-        return serializers.TestsuitsRunSerializer if self.action == 'run' else self.serializer_class
+        if self.action == 'run':
+            return serializers.TestsuitsRunSerializer
+        elif self.action == 'batch_delete':
+            return serializers.TestsuitsBatchDeleteSerializer
+        else:
+            return serializers.TestSuitSerializer

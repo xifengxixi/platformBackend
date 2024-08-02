@@ -44,3 +44,20 @@ class TestsuitsRunSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testsuits
         fields = ('id', 'env_id')
+
+class TestsuitsBatchDeleteSerializer(serializers.Serializer):
+    """
+    批量删除套件序列化器
+    """
+    ids = serializers.ListField(help_text='套件ID列表', child=serializers.IntegerField(validators=[validates.whether_existed_testsuit_id]))
+
+    class Meta:
+        fields = ('ids',)
+
+    def validate_ids(self, value):
+        for testsuit_id in value:
+            try:
+                validates.whether_existed_testsuit_id(testsuit_id)
+            except:
+                raise serializers.ValidationError(f"套件ID{testsuit_id}不存在")
+        return value
