@@ -14,6 +14,7 @@ from django.http import StreamingHttpResponse
 from .utils import get_file_contents
 from django.utils.encoding import escape_uri_path
 from rest_framework.response import Response
+from rest_framework import status
 
 
 class ReportViewSet(
@@ -28,10 +29,21 @@ class ReportViewSet(
     serializer_class = serializers.ReportSerializer
     permission_classes = [permissions.AllowAny]
     ordering_fields = ('id', 'name')
+    search_fields = ['name',]
 
     def perform_destroy(self, instance):
         instance.is_delete = True
         instance.save()
+
+    @action(methods=['post'], detail=False)
+    def batch_delete(self, request, *args, **kwargs):
+        serializers = self.get_serializer(data=request.data)
+        if serializers.is_valid():
+            ids = serializers.validated_data.get('ids', [])
+            self.get_queryset().filter(id__in=ids).update(is_delete=True)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
@@ -73,3 +85,9 @@ class ReportViewSet(
         response['Content-Type'] = 'application/octet-stream'
         response['Content-Disposition'] = f'attachment; filename*=UTF-8 {report_path_final}'
         return response
+
+    def get_serializer_class(self):
+        if self.action == 'batch_delete':
+            return serializers.ReportBatchDeleteSerializer
+        else:
+            return serializers.ReportSerializer
