@@ -1,5 +1,5 @@
 # 第一种：
-# 将 [{'check': 'status_code', 'expected': 200, 'comparator': 'equals'}]
+# 将 [{'check': 'status_code', 'expect': 200, 'comparator': 'equals'}]
 # 转化为 [{key: 'status_code', value: 200, comparator: 'equals', param_type: 'int'}]
 
 # 第二种：
@@ -42,7 +42,7 @@ def handle_param_type(value):
 def handle_data1(datas):
     """
     处理第一种类型的数据转化
-    将 [{'check': 'status_code', 'expected': 200, 'comparator': 'equals'}]
+    将 [{'check': 'status_code', 'expect': 200, 'comparator': 'equals'}]
     转化为 [{key: 'status_code', value: 200, comparator: 'equals', param_type: 'int'}]
     :param datas:
     :return:
@@ -51,7 +51,7 @@ def handle_data1(datas):
     if datas is not None:
         for one_validate_dict in datas:
             key = one_validate_dict.get('check')
-            value = one_validate_dict.get('expected')
+            value = one_validate_dict.get('expect')
             comparator = one_validate_dict.get('comparator')
             result_list.append({
                 'key': key,
