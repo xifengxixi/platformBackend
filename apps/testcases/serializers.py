@@ -100,3 +100,14 @@ class TestcasesNameSerializer(serializers.ModelSerializer):
         except:
             raise serializers.ValidationError(f"接口ID{value}不存在")
         return value
+
+class TestcasesNamesByIdSerializer(serializers.ModelSerializer):
+    """
+    用例名称序列化器
+    """
+    class Meta:
+        model = Testcases
+        fields = ('id', 'name')
+        extra_kwargs = {
+            'name': {'read_only': True},
+        }

@@ -142,6 +142,8 @@ class TestcasesViewSet(viewsets.ModelViewSet):
             return serializers.TestcasesBatchDeleteSerializer
         elif self.action == 'names':
             return serializers.TestcasesNameSerializer
+        elif self.action == 'names_by_ids':
+            return serializers.TestcasesNamesByIdSerializer
         else:
             return self.serializer_class
 
@@ -165,5 +167,12 @@ class TestcasesViewSet(viewsets.ModelViewSet):
     def names(self, request, *args, **kwargs):
         interface_id = request.data.get('interface_id', '')
         queryset = self.get_queryset().filter(interface_id=interface_id)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['post'], detail=False)
+    def names_by_ids(self, request, *args, **kwargs):
+        ids = request.data.get('ids', '')
+        queryset = self.get_queryset().filter(id__in=ids)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
