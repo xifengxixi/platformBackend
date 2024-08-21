@@ -105,9 +105,11 @@ class TestcasesNamesByIdSerializer(serializers.ModelSerializer):
     """
     用例名称序列化器
     """
+    ids = serializers.ListField(child=serializers.IntegerField(), required=True, help_text="用例ID列表", write_only=True)
+
     class Meta:
         model = Testcases
-        fields = ('id', 'name')
+        fields = ('ids', 'id', 'name')
         extra_kwargs = {
             'name': {'read_only': True},
         }

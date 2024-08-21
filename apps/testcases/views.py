@@ -172,7 +172,8 @@ class TestcasesViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False)
     def names_by_ids(self, request, *args, **kwargs):
-        ids = request.data.get('ids', '')
+        ids = request.data.get('ids', [])
+        ids = ids if ids else []
         queryset = self.get_queryset().filter(id__in=ids)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)

@@ -95,7 +95,7 @@ def generate_testcase_files(instance, env, testcase_dir_path):
     # 如果include前置中有config，那么添加到testcases_list中，否则使用上面默认的config
     if 'config' in include:
         config_id = include.get('config')
-        config_obj = Configures.objects.filter(is_delete=False, id=config_id).filter()
+        config_obj = Configures.objects.filter(is_delete=False, id=config_id).first()
         if config_obj:
             config_request = json.loads(config_obj.request)
 
@@ -103,7 +103,7 @@ def generate_testcase_files(instance, env, testcase_dir_path):
             config_request['config']['name'] = instance.name
             testcases_list[0] = config_request
 
-    # 如果include前置中有testcases，那么添加到testases_list中
+    # 如果include前置中有testcases，那么添加到testcases_list中
     if 'testcases' in include:
         for t_id in include.get('testcases'):
             testcase_obj = Testcases.objects.filter(is_delete=False, id=t_id).filter()
