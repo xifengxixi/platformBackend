@@ -65,3 +65,16 @@ class InterfaceBatchDeleteSerializer(serializers.Serializer):
             except:
                 raise serializers.ValidationError(f'接口ID{interface_id}不存在')
         return value
+
+class InterfaceNamesByIdsSerializer(serializers.ModelSerializer):
+    """
+    接口名称序列化器
+    """
+    ids = serializers.ListField(child=serializers.IntegerField(), required=True, help_text='接口ID列表', write_only=True)
+
+    class Meta:
+        model = Interfaces
+        fields = ('ids', 'id', 'name')
+        extra_kwargs = {
+            'name': {'read_only': True},
+        }

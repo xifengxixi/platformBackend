@@ -105,15 +105,16 @@ def generate_testcase_files(instance, env, testcase_dir_path):
 
     # 如果include前置中有testcases，那么添加到testcases_list中
     if 'testcases' in include:
-        for t_id in include.get('testcases'):
-            testcase_obj = Testcases.objects.filter(is_delete=False, id=t_id).filter()
-            if testcase_obj:
-                try:
-                    testcase_request = json.loads(testcase_obj.request)
-                except Exception as e:
-                    pass
-                else:
-                    testcases_list.append(testcase_request)
+        if include.get('testcases'):
+            for t_id in include.get('testcases'):
+                testcase_obj = Testcases.objects.filter(is_delete=False, id=t_id).filter()
+                if testcase_obj:
+                    try:
+                        testcase_request = json.loads(testcase_obj.request)
+                    except Exception as e:
+                        pass
+                    else:
+                        testcases_list.append(testcase_request)
 
     # 将当前用例的request添加到testcases_list
     testcases_list.append(request)
@@ -133,7 +134,7 @@ def create_report(runner, report_name=None):
     runner.summary['time']['start_datetime'] = start_datetime
     # duration保留3位小数
     runner.summary['time']['duration'] = round(runner.summary['time']['duration'])
-    report_name = report_name if report_name else start_datetime
+    report_name = f'{report_name}_{time.strftime("%Y%m%d%H%M%S")}' if report_name else start_datetime
     runner.summary['html_report_name'] = report_name
 
     # 将字节类型转换成字符串，防止json.dumps的时候报错
@@ -151,7 +152,6 @@ def create_report(runner, report_name=None):
 
     summary = json.dumps(runner.summary)
 
-    report_name = report_name + '_' + time.strftime('%Y%m%d%H%M%S')
     report_path = runner.gen_html_report(html_report_name=report_name)
 
     with open(report_path, encoding='utf-8') as stream:
@@ -166,7 +166,7 @@ def create_report(runner, report_name=None):
         'summary': summary
     }
     report_obj = Reports.objects.create(**test_report)
-    return report_obj.id
+    return report_obj.id, report_name
 
 def run_testcase(instance, testcase_dir_path):
     """
@@ -185,9 +185,10 @@ def run_testcase(instance, testcase_dir_path):
     except Exception as e:
         report_name = '被遗弃的报告' + '-' + time.strftime('%Y%m%d%H%M%S%f')
 
-    report_id = create_report(runner, report_name=report_name)
+    report_id, report_name = create_report(runner, report_name=report_name)
     data_dict = {
-        'id': report_id
+        'id': report_id,
+        'name': report_name
     }
 
     return Response(data_dict, status=status.HTTP_201_CREATED)

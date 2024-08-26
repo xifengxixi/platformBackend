@@ -111,6 +111,14 @@ class InterfacesViewSet(viewsets.ModelViewSet):
         # 运行用例
         return common.run_testcase(instance, testcase_dir_path)
 
+    @action(methods=['post'], detail=False)
+    def names_by_ids(self, request, *args, **kwargs):
+        ids = request.data.get('ids', [])
+        ids = ids if ids else []
+        queryset = self.get_queryset().filter(id__in=ids)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     def get_serializer_class(self):
         """
         不同的action选择不同的序列化器
@@ -122,5 +130,7 @@ class InterfacesViewSet(viewsets.ModelViewSet):
             return serializers.InterfaceListSerializer
         elif self.action == 'batch_delete':
             return serializers.InterfaceBatchDeleteSerializer
+        elif self.action == 'names_by_ids':
+            return serializers.InterfaceNamesByIdsSerializer
         else:
             return self.serializer_class
