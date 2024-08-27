@@ -4,6 +4,6 @@ from .serializers import token_obtain_pair
 from . import views
 
 urlpatterns = [
-    path('login/', token_obtain_pair),
-    path('register/', views.RegisterView.as_view()),
+    path('user/login/', token_obtain_pair),
+    path('user/register/', views.RegisterView.as_view()),
 ]
