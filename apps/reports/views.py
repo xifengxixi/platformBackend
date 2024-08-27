@@ -28,7 +28,7 @@ class ReportViewSet(
     queryset = Reports.objects.filter(is_delete=False)
     serializer_class = serializers.ReportSerializer
     permission_classes = [permissions.AllowAny]
-    ordering_fields = ('id', 'name')
+    ordering_fields = ('id', 'name', 'create_time')
     search_fields = ['name',]
 
     def perform_destroy(self, instance):
@@ -46,6 +46,8 @@ class ReportViewSet(
             return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):
+        ordering = request.query_params.get('ordering') if request.query_params.get('ordering') else '-create_time'
+        self.queryset = self.queryset.order_by(ordering)
         response = super().list(request, *args, **kwargs)
         for i in response.data['results']:
             i['result'] = 'Pass' if i['result'] else 'Fail'

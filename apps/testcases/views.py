@@ -8,7 +8,7 @@ import json
 from rest_framework.response import Response
 from rest_framework.decorators import action
 import os
-import time
+from datetime import datetime
 from django.conf import settings
 from envs.models import Envs
 from utils import common
@@ -123,7 +123,7 @@ class TestcasesViewSet(viewsets.ModelViewSet):
         datas = serializer.validated_data
 
         env_id = datas.get('env_id')
-        testcase_dir_path = os.path.join(settings.SUITES_DIR, time.strftime('%Y%m%d%H%M%S%f'))
+        testcase_dir_path = os.path.join(settings.SUITES_DIR, datetime.now().strftime('%Y%m%d%H%M%S%f'))
         os.mkdir(testcase_dir_path)
 
         env = Envs.objects.filter(id=env_id, is_delete=False).first()
