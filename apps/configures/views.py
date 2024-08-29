@@ -15,7 +15,7 @@ class ConfiguresViewSet(viewsets.ModelViewSet):
 
     queryset = Configures.objects.filter(is_delete=False)
     serializer_class = ConfiguresSerializer
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
     filterset_fields = ['name',]
     search_fields = ['name', 'author']

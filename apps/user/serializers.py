@@ -1,21 +1,24 @@
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        # 在响应中添加额外的用户信息或自定义信息
-        user = User.objects.get(username=request.data.get('username'))
-        response.data['username'] = user.username
-        response.data['userid'] = user.id
-        return response
 
-# 将自定义的视图类应用到URL
-token_obtain_pair = CustomTokenObtainPairView.as_view()
+class UserLoginSerializer(TokenObtainPairSerializer):
 
-class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'password')
+        extra_kwargs = {
+            'username': {
+                'read_only': True
+            },
+            'password': {
+                'read_only': True
+            }
+        }
+
+
+class UserRegisterSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(
         label='确认密码', min_length=6, max_length=20,
         help_text='确认密码', write_only=True,
@@ -24,11 +27,11 @@ class RegisterSerializer(serializers.ModelSerializer):
             'max_length': '仅允许6~20个字符的确认密码',
         }
     )
-    token = serializers.CharField(label='生成token', read_only=True)
+    access = serializers.CharField(label='生成token', read_only=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'password', 'email', 'password_confirm', 'token')
+        fields = ('id', 'username', 'password', 'email', 'password_confirm', 'access')
         extra_kwargs = {
             'username': {
                 'label': '用户名',
@@ -68,10 +71,4 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password_confirm')
         user = User.objects.create_user(**validated_data)
-
-        from rest_framework_simplejwt.tokens import RefreshToken
-        refresh = RefreshToken.for_user(user)
-        access = refresh.access_token
-
-        user.token = access
         return user

@@ -1,9 +1,10 @@
-from django.urls import path, include
-# from rest_framework_simplejwt.views import token_obtain_pair
-from .serializers import token_obtain_pair
+from rest_framework import routers
 from . import views
+from django.urls import path, include
+
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    path('user/login/', token_obtain_pair),
-    path('user/register/', views.RegisterView.as_view()),
+    path('', include(router.urls)),
 ]

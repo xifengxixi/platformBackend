@@ -18,7 +18,7 @@ class TestcasesViewSet(viewsets.ModelViewSet):
 
     queryset = Testcases.objects.filter(is_delete=False)
     serializer_class = serializers.TestcasesSerializer
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
 
     def perform_destroy(self, instance):

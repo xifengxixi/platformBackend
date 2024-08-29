@@ -27,7 +27,7 @@ class ReportViewSet(
 
     queryset = Reports.objects.filter(is_delete=False)
     serializer_class = serializers.ReportSerializer
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [permissions.AllowAny]
     ordering_fields = ('id', 'name', 'create_time')
     search_fields = ['name',]
 

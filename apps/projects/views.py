@@ -20,7 +20,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
 
     queryset = Projects.objects.filter(is_delete=False)
     serializer_class = serializers.ProjectModelSerializer
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [permissions.AllowAny]
     ordering_fields = ['id', 'name']
 
     def perform_destroy(self, instance):
