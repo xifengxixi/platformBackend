@@ -42,11 +42,14 @@ class UserViewSet(
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # @action(methods=['post'], detail=False)
-    # def get_email_count(self, request, *args, **kwargs):
-    #     email = request.data.get('email')
-    #     count = User.objects.filter(email=email).count()
-    #     return Response({'count': count})
+    @action(methods=['post'], detail=False)
+    def check_email(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            email = request.data.get('email')
+            count = User.objects.filter(email=email).count()
+            return Response({'count': count})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_serializer_class(self):
         if self.action == 'login':
@@ -54,4 +57,4 @@ class UserViewSet(
         elif self.action == 'register':
             return serializers.UserRegisterSerializer
         else:
-            return serializers.UserLoginSerializer
+            return serializers.UserCheckEmailSerializer

@@ -72,3 +72,17 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         validated_data.pop('password_confirm')
         user = User.objects.create_user(**validated_data)
         return user
+
+class UserCheckEmailSerializer(serializers.Serializer):
+
+    class Meta:
+        Model = User
+        fields = ('id', 'email',)
+        extra_kwargs = {
+            'email': {
+                'label': '邮箱',
+                'help_text': '邮箱',
+                'write_only': True,
+                'required': True,
+            }
+        }
