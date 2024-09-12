@@ -8,6 +8,8 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
+from django.core.cache import cache
 
 
 class UserViewSet(
@@ -25,6 +27,11 @@ class UserViewSet(
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             user = serializer.user
+            last_login_time = user.last_login
+            user.last_login = timezone.now()
+            user.save()
+            cache.set(f'last_login_{user.id}', last_login_time)
+
             response_data = serializer.validated_data
             response_data.update({
                 'username': user.username,

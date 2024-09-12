@@ -10,6 +10,7 @@ from debugtalks.models import DebugTalks
 from reports.models import Reports
 from django.db.models import Sum
 from rest_framework.response import Response
+from django.core.cache import cache
 
 
 class SummaryAPIView(APIView):
@@ -29,7 +30,7 @@ class SummaryAPIView(APIView):
             'username': user.username,
             'role': '管理员' if user.is_superuser else '普通用户',
             'date_joined': user.date_joined.strftime('%Y-%m-%d %H:%M:%S') if user.date_joined else '',
-            'last_login': user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else '',
+            'last_login': cache.get(f'last_login_{user.id}').strftime('%Y-%m-%d %H:%M:%S') if cache.get(f'last_login_{user.id}') else '',
         }
 
         projects_count = Projects.objects.filter(is_delete=False).count()
