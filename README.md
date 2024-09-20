@@ -31,62 +31,62 @@ python manage.py runserver
 
 - 登录注册
 
-![login.png](src/assets/img/login.png)
+![login.png](images/login.png)
 
-![register.png](src/assets/img/register.png)
+![register.png](images/register.png)
 
 - 系统首页
 
-![home.png](src/assets/img/home.png)
+![home.png](images/home.png)
 
 - 项目管理
 
-![project_list.png](src/assets/img/project_list.png)
+![project_list.png](images/project_list.png)
 
-![project_add.png](src/assets/img/project_add.png)
+![project_add.png](images/project_add.png)
 
 - 环境管理
 
-![env_list.png](src/assets/img/env_list.png)
+![env_list.png](images/env_list.png)
 
-![env_add.png](src/assets/img/env_add.png)
+![env_add.png](images/env_add.png)
 
 - 内置函数
 
-![func_list.png](src/assets/img/func_list.png)
+![func_list.png](images/func_list.png)
 
-![func_edit.png](src/assets/img/func_edit.png)
+![func_edit.png](images/func_edit.png)
 
 - 接口管理
 
-![api_list.png](src/assets/img/api_list.png)
+![api_list.png](images/api_list.png)
 
-![api_add.png](src/assets/img/api_add.png)
+![api_add.png](images/api_add.png)
 
 - 用例管理
 
-![testcase_list](src/assets/img/testcase_list.png)
+![testcase_list](images/testcase_list.png)
 
-![testcase_add](src/assets/img/testcase_add.png)
+![testcase_add](images/testcase_add.png)
 
-![testcase_edit](src/assets/img/testsuit_edit.png)
+![testcase_edit](images/testsuit_edit.png)
 
 - 配置管理
 
-![config_list](src/assets/img/config_list.png)
+![config_list](images/config_list.png)
 
-![config_add](src/assets/img/config_add.png)
+![config_add](images/config_add.png)
 
 - 套件管理
 
-![testsuit_list](src/assets/img/testsuit_list.png)
+![testsuit_list](images/testsuit_list.png)
 
-![testsuit_add](src/assets/img/testsuit_add.png)
+![testsuit_add](images/testsuit_add.png)
 
-![testsuit_edit](src/assets/img/testsuit_edit.png)
+![testsuit_edit](images/testsuit_edit.png)
 
 - 报告管理
 
-![report_list](src/assets/img/report_list.png)
+![report_list](images/report_list.png)
 
-![report_vies](src/assets/img/report_view.png)
+![report_vies](images/report_view.png)
