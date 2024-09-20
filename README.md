@@ -7,6 +7,8 @@
 - 个人语雀地址：[https://www.yuque.com/xifengxixi](https://gitee.com/link?target=https%3A%2F%2Fwww.yuque.com%2Fxifengxixi)
 - 技术支持邮箱：1107872406@qq.com
 
+> 本项目不建议用于实际企业项目，仅为个人练手使用
+> 
 > 需要练习的朋友可以查看本人语雀项目，有相关笔记。需要教程的朋友，可加Q私信
 
 如果对您有帮助，请点亮本项目的小星星，不胜感激。
