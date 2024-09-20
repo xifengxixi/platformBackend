@@ -31,7 +31,7 @@ python manage.py runserver
 
 - 登录注册
 
-![login.png](images/login.png)
+![login.png](./images/login.png)
 
 ![register.png](images/register.png)
 
